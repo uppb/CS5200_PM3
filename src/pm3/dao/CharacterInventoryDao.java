@@ -1,6 +1,8 @@
 package pm3.dao;
 
+import pm3.model.Character;
 import pm3.model.CharacterInventory;
+import pm3.model.Item;
 
 import java.sql.*;
 
@@ -53,6 +55,75 @@ public class CharacterInventoryDao {
             }
             if(insertStmt != null) {
                 insertStmt.close();
+            }
+        }
+    }
+    public CharacterInventory getByInventorySlotID(int inventorySlotID) throws SQLException {
+        String selectCharacterInventory = "SELECT InventorySlotID, CharacterID, ItemID, StackSize FROM CharacterInventory WHERE InventorySlotID = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectCharacterInventory);
+            selectStmt.setInt(1, inventorySlotID);
+
+            results = selectStmt.executeQuery();
+            if(results.next()) {
+                int foundInventorySlotID = results.getInt("InventorySlotID");
+                int characterID = results.getInt("CharacterID");
+                int itemID = results.getInt("ItemID");
+                int stackSize = results.getInt("StackSize");
+
+                Character character = CharacterDao.getInstance().getCharacterById(characterID); // Assuming this method exists
+                Item item = ItemDao.getInstance().getItemByID(itemID); // Assuming this method exists
+
+                CharacterInventory characterInventory = new CharacterInventory(foundInventorySlotID);
+                characterInventory.setCharacter(character);
+                characterInventory.setItem(item);
+                characterInventory.setStackSize(stackSize);
+
+                return characterInventory;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(results != null) {
+                results.close();
+            }
+            if(selectStmt != null) {
+                selectStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+
+    public CharacterInventory updateStackSize(int inventorySlotID, int newStackSize) throws SQLException {
+        String updateCharacterInventory = "UPDATE CharacterInventory SET StackSize = ? WHERE InventorySlotID = ?;";
+        Connection connection = null;
+        PreparedStatement updateStmt = null;
+        try {
+            connection = connectionManager.getConnection();
+            updateStmt = connection.prepareStatement(updateCharacterInventory);
+            updateStmt.setInt(1, newStackSize);
+            updateStmt.setInt(2, inventorySlotID);
+
+            updateStmt.executeUpdate();
+
+            return getByInventorySlotID(inventorySlotID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(updateStmt != null) {
+                updateStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
             }
         }
     }

@@ -32,6 +32,35 @@ public class Character {
         this.characterID = characterID;
     }
 
+    public Character(int characterID, Player player, String firstName, String lastName, int maxHP, int maxMP, Job currentJob, Weapon mainHandWeapon, int strength, int dexterity, int vitality, int intelligence, int mind, int criticalHit, int determination, int directHitRate, int defense, int magicDefense, int attackPower, int skillSpeed, int attackMagicPotency, int healingMagicPotency, int spellSpeed, int averageItemLevel, int tenacity, int piety) {
+        this.characterID = characterID;
+        this.player = player;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.maxHP = maxHP;
+        this.maxMP = maxMP;
+        this.currentJob = currentJob;
+        this.mainHandWeapon = mainHandWeapon;
+        this.strength = strength;
+        this.dexterity = dexterity;
+        this.vitality = vitality;
+        this.intelligence = intelligence;
+        this.mind = mind;
+        this.criticalHit = criticalHit;
+        this.determination = determination;
+        this.directHitRate = directHitRate;
+        this.defense = defense;
+        this.magicDefense = magicDefense;
+        this.attackPower = attackPower;
+        this.skillSpeed = skillSpeed;
+        this.attackMagicPotency = attackMagicPotency;
+        this.healingMagicPotency = healingMagicPotency;
+        this.spellSpeed = spellSpeed;
+        this.averageItemLevel = averageItemLevel;
+        this.tenacity = tenacity;
+        this.piety = piety;
+    }
+
     public Character(Player player, String firstName, String lastName, int maxHP, int maxMP, Job currentJob, Weapon mainHandWeapon, int strength, int dexterity, int vitality, int intelligence, int mind, int criticalHit, int determination, int directHitRate, int defense, int magicDefense, int attackPower, int skillSpeed, int attackMagicPotency, int healingMagicPotency, int spellSpeed, int averageItemLevel, int tenacity, int piety) {
         this.player = player;
         this.firstName = firstName;
@@ -59,6 +88,8 @@ public class Character {
         this.tenacity = tenacity;
         this.piety = piety;
     }
+
+
 
     public int getCharacterID() {
         return characterID;

@@ -9,8 +9,12 @@ public class Item {
   protected Integer ItemLevel;
 
 
+  public Item(Integer itemID) {
+    ItemID = itemID;
+  }
+
   public Item(Integer itemID, String name, Integer maxStackSize, Boolean forSale,
-      Integer itemLevel) {
+              Integer itemLevel) {
     ItemID = itemID;
     Name = name;
     MaxStackSize = maxStackSize;
@@ -24,6 +28,11 @@ public class Item {
     ForSale = forSale;
     ItemLevel = itemLevel;
   }
+
+  public Item() {
+
+  }
+
 
   public Integer getItemID() {
     return ItemID;

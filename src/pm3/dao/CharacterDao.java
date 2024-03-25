@@ -97,16 +97,15 @@ public class CharacterDao {
             results = selectStmt.executeQuery();
             if(results.next()) {
                 int resultCharacterID = results.getInt("CharacterID");
-                // Assuming getPlayerById returns a Player object
                 Player player = PlayerDao.getInstance().getPlayerById(results.getInt("PlayerID"));
                 String firstName = results.getString("FirstName");
                 String lastName = results.getString("LastName");
                 int maxHP = results.getInt("MaxHP");
                 int maxMP = results.getInt("MaxMP");
-                // Placeholder for fetching Job; implement according to your model
-                Job currentJob = new Job(results.getInt("CurrentJobID"));
-                // Placeholder for fetching Weapon; implement according to your model
-                Weapon mainHandWeapon = new Weapon(results.getInt("MainHandWeaponID"));
+                int currentJobId = results.getInt("CurrentJobID");
+                Job currentJob = JobDao.getInstance().getJobById(currentJobId);
+                int mainHandWeaponID = results.getInt("MainHandWeaponID");
+                Weapon mainHandWeapon = WeaponDao.getInstance().getWeaponByID(mainHandWeaponID);
                 int strength = results.getInt("Strength");
                 int dexterity = results.getInt("Dexterity");
                 int vitality = results.getInt("Vitality");
@@ -126,7 +125,7 @@ public class CharacterDao {
                 int tenacity = results.getInt("Tenacity");
                 int piety = results.getInt("Piety");
 
-                Character character = new Character(characterID, player, firstName, lastName, maxHP, maxMP, currentJob, mainHandWeapon, strength, dexterity, vitality, intelligence, mind, criticalHit, determination, directHitRate, defense, magicDefense, attackPower, skillSpeed, attackMagicPotency, healingMagicPotency, spellSpeed, averageItemLevel, tenacity, piety);
+                Character character = new Character(resultCharacterID, player, firstName, lastName, maxHP, maxMP, currentJob, mainHandWeapon, strength, dexterity, vitality, intelligence, mind, criticalHit, determination, directHitRate, defense, magicDefense, attackPower, skillSpeed, attackMagicPotency, healingMagicPotency, spellSpeed, averageItemLevel, tenacity, piety);
                 return character;
             }
         }  catch (SQLException e) {
@@ -144,5 +143,31 @@ public class CharacterDao {
             }
         }
         return null;
+    }
+
+    public boolean deleteCharacter(int characterID) throws SQLException {
+        String deleteCharacter = "DELETE FROM `Character` WHERE CharacterID = ?;";
+        Connection connection = null;
+        PreparedStatement deleteStmt = null;
+        try {
+            connection = connectionManager.getConnection();
+            deleteStmt = connection.prepareStatement(deleteCharacter);
+            deleteStmt.setInt(1, characterID);
+
+            int affectedRows = deleteStmt.executeUpdate();
+
+            // Return true if a row was deleted.
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(deleteStmt != null) {
+                deleteStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
     }
 }

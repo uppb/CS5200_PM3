@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
+
 public class GearTypeDao {
     protected ConnectionManager connectionManager;
     private static GearTypeDao instance = null;
@@ -28,7 +31,7 @@ public class GearTypeDao {
             connection = connectionManager.getConnection();
             insertStmt = connection.prepareStatement(insertGearType);
 
-            insertStmt.setString(1,gearType.toString());
+            insertStmt.setString(1, gearType.name());
 
             insertStmt.executeUpdate();
 
@@ -45,5 +48,16 @@ public class GearTypeDao {
                 insertStmt.close();
             }
         }
+    }
+    public GearType getGearTypeByTypeName(String typeName) throws SQLException {
+        try {
+            return GearType.valueOf(typeName);
+        } catch (IllegalArgumentException e) {
+            System.out.println("GearType with TypeName " + typeName + " not found.");
+            return null;
+        }
+    }
+    public List<GearType> getAllGearTypes() {
+        return Arrays.asList(GearType.values());
     }
 }

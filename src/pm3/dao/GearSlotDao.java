@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
+
 public class GearSlotDao {
     protected ConnectionManager connectionManager;
     private static GearSlotDao instance = null;
@@ -26,9 +29,9 @@ public class GearSlotDao {
         PreparedStatement insertStmt = null;
         try{
             connection = connectionManager.getConnection();
-            insertStmt = connection.prepareStatement(insertGearSlot);
+            insertStmt = connection.prepareStatement(insertGearSlot, Statement.RETURN_GENERATED_KEYS);
 
-            insertStmt.setString(1,gearSlot.toString());
+            insertStmt.setString(1, gearSlot.name());
 
             insertStmt.executeUpdate();
 
@@ -46,4 +49,42 @@ public class GearSlotDao {
             }
         }
     }
+    public GearSlot getGearSlotByTypeName(String typeName) throws SQLException {
+        String selectGearSlot = "SELECT TypeName FROM GearSlot WHERE TypeName = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectGearSlot);
+            selectStmt.setString(1, typeName);
+
+            results = selectStmt.executeQuery();
+            if (results.next()) {
+                String foundTypeName = results.getString("TypeName");
+                return GearSlot.valueOf(foundTypeName);
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("GearSlot with TypeName " + typeName + " not found.");
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (results != null) {
+                results.close();
+            }
+            if (selectStmt != null) {
+                selectStmt.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+    public List<GearSlot> getAllGearSlots() {
+        return Arrays.asList(GearSlot.values());
+    }
+
 }

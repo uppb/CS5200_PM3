@@ -56,4 +56,66 @@ public class JobDao {
             }
         }
     }
+
+    public Job getJobById(int jobID) throws SQLException {
+        String selectJob = "SELECT JobID, Name, LevelCap FROM Job WHERE JobID = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectJob);
+            selectStmt.setInt(1, jobID);
+
+            results = selectStmt.executeQuery();
+            if(results.next()) {
+                int resultJobID = results.getInt("JobID");
+                String name = results.getString("Name");
+                int levelCap = results.getInt("LevelCap");
+
+                Job job = new Job(resultJobID, name, levelCap);
+                return job;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(results != null) {
+                results.close();
+            }
+            if(selectStmt != null) {
+                selectStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+    public Job updateJob(int jobID, String newName, int newLevelCap) throws SQLException {
+        String updateJob = "UPDATE Job SET Name = ?, LevelCap = ? WHERE JobID = ?;";
+        Connection connection = null;
+        PreparedStatement updateStmt = null;
+        try {
+            connection = connectionManager.getConnection();
+            updateStmt = connection.prepareStatement(updateJob);
+            updateStmt.setString(1, newName);
+            updateStmt.setInt(2, newLevelCap);
+            updateStmt.setInt(3, jobID);
+
+            updateStmt.executeUpdate();
+
+            return new Job(jobID, newName, newLevelCap);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(updateStmt != null) {
+                updateStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+    }
 }

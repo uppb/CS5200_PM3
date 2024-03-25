@@ -37,6 +37,10 @@ public class Weapon extends Item{
     AttackDelay = attackDelay;
   }
 
+  public Weapon(int mainHandWeaponID) {
+    super();
+  }
+
   public String getWeaponType() {
     return WeaponType;
   }

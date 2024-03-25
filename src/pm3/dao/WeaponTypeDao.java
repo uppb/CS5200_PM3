@@ -7,6 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class WeaponTypeDao {
     protected ConnectionManager connectionManager;
     private static WeaponTypeDao instance = null;
@@ -28,7 +32,7 @@ public class WeaponTypeDao {
             connection = connectionManager.getConnection();
             insertStmt = connection.prepareStatement(insertWeaponType);
 
-            insertStmt.setString(1,weaponType.toString());
+            insertStmt.setString(1, weaponType.name());
 
             insertStmt.executeUpdate();
 
@@ -46,4 +50,44 @@ public class WeaponTypeDao {
             }
         }
     }
+    public WeaponType getWeaponTypeByName(String typeName) throws SQLException {
+        String selectWeaponType = "SELECT TypeName FROM WeaponType WHERE TypeName = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectWeaponType);
+            selectStmt.setString(1, typeName);
+
+            results = selectStmt.executeQuery();
+            if(results.next()) {
+                String foundTypeName = results.getString("TypeName");
+                return WeaponType.valueOf(foundTypeName);
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("No WeaponType found with TypeName: " + typeName);
+            return null;
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(results != null) {
+                results.close();
+            }
+            if(selectStmt != null) {
+                selectStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+
+    public List<WeaponType> getAllWeaponTypes() {
+        return new ArrayList<>(Arrays.asList(WeaponType.values()));
+    }
+
+
 }
