@@ -21,6 +21,7 @@ public class PlayerDao {
     }
 
     public Player create(Player player) throws SQLException{
+
         String insertPlayer = "INSERT INTO Player(`Name`,EmailAddress) VALUES(?,?)";
         Connection connection = null;
         PreparedStatement insertStmt = null;
@@ -57,4 +58,66 @@ public class PlayerDao {
             }
         }
     }
-}
+
+    public Player getPlayerById(int playerID) throws SQLException {
+        String selectPlayer = "SELECT PlayerID, Name, EmailAddress FROM Player WHERE PlayerID = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectPlayer);
+            selectStmt.setInt(1, playerID);
+            results = selectStmt.executeQuery();
+            if(results.next()) {
+                int resultPlayerID = results.getInt("PlayerID");
+                String name = results.getString("Name");
+                String emailAddress = results.getString("EmailAddress");
+                Player player = new Player(resultPlayerID, name, emailAddress);
+                return player;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(results != null) {
+                results.close();
+            }
+            if(selectStmt != null) {
+                selectStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+        return null;
+    }
+
+    public Player updatePlayerEmail(int playerID, String newEmailAddress) throws SQLException {
+        String updatePlayer = "UPDATE Player SET EmailAddress = ? WHERE PlayerID = ?;";
+        Connection connection = null;
+        PreparedStatement updateStmt = null;
+        try {
+            connection = connectionManager.getConnection();
+            updateStmt = connection.prepareStatement(updatePlayer);
+            updateStmt.setString(1, newEmailAddress);
+            updateStmt.setInt(2, playerID);
+            updateStmt.executeUpdate();
+
+            return getPlayerById(playerID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(updateStmt != null) {
+                updateStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+
+}	
+	

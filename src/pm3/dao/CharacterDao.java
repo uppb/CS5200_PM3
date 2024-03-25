@@ -40,7 +40,7 @@ public class CharacterDao {
             insertStmt.setInt(3, character.getMaxHP());
             insertStmt.setInt(4, character.getMaxMP());
             insertStmt.setInt(5, character.getCurrentJob().getJobID());
-            //insertStmt.setInt(6, character.getMainHandWeapon().getWeaponID()));
+            insertStmt.setInt(6, character.getMainHandWeapon().getItemID());
             insertStmt.setInt(7, character.getStrength());
             insertStmt.setInt(8, character.getDexterity());
             insertStmt.setInt(9, character.getVitality());
@@ -83,5 +83,66 @@ public class CharacterDao {
                 insertStmt.close();
             }
         }
+    }
+
+    public Character getCharacterById(int characterID) throws SQLException {
+        String selectCharacter = "SELECT CharacterID, PlayerID, FirstName, LastName, MaxHP, MaxMP, CurrentJobID, MainHandWeaponID, Strength, Dexterity, Vitality, Intelligence, Mind, CriticalHit, Determination, DirectHitRate, Defense, MagicDefense, AttackPower, SkillSpeed, AttackMagicPotency, HealingMagicPotency, SpellSpeed, AverageItemLevel, Tenacity, Piety FROM `Character` WHERE CharacterID = ?;";
+        Connection connection = null;
+        PreparedStatement selectStmt = null;
+        ResultSet results = null;
+        try {
+            connection = connectionManager.getConnection();
+            selectStmt = connection.prepareStatement(selectCharacter);
+            selectStmt.setInt(1, characterID);
+            results = selectStmt.executeQuery();
+            if(results.next()) {
+                int resultCharacterID = results.getInt("CharacterID");
+                // Assuming getPlayerById returns a Player object
+                Player player = PlayerDao.getInstance().getPlayerById(results.getInt("PlayerID"));
+                String firstName = results.getString("FirstName");
+                String lastName = results.getString("LastName");
+                int maxHP = results.getInt("MaxHP");
+                int maxMP = results.getInt("MaxMP");
+                // Placeholder for fetching Job; implement according to your model
+                Job currentJob = new Job(results.getInt("CurrentJobID"));
+                // Placeholder for fetching Weapon; implement according to your model
+                Weapon mainHandWeapon = new Weapon(results.getInt("MainHandWeaponID"));
+                int strength = results.getInt("Strength");
+                int dexterity = results.getInt("Dexterity");
+                int vitality = results.getInt("Vitality");
+                int intelligence = results.getInt("Intelligence");
+                int mind = results.getInt("Mind");
+                int criticalHit = results.getInt("CriticalHit");
+                int determination = results.getInt("Determination");
+                int directHitRate = results.getInt("DirectHitRate");
+                int defense = results.getInt("Defense");
+                int magicDefense = results.getInt("MagicDefense");
+                int attackPower = results.getInt("AttackPower");
+                int skillSpeed = results.getInt("SkillSpeed");
+                int attackMagicPotency = results.getInt("AttackMagicPotency");
+                int healingMagicPotency = results.getInt("HealingMagicPotency");
+                int spellSpeed = results.getInt("SpellSpeed");
+                int averageItemLevel = results.getInt("AverageItemLevel");
+                int tenacity = results.getInt("Tenacity");
+                int piety = results.getInt("Piety");
+
+                Character character = new Character(characterID, player, firstName, lastName, maxHP, maxMP, currentJob, mainHandWeapon, strength, dexterity, vitality, intelligence, mind, criticalHit, determination, directHitRate, defense, magicDefense, attackPower, skillSpeed, attackMagicPotency, healingMagicPotency, spellSpeed, averageItemLevel, tenacity, piety);
+                return character;
+            }
+        }  catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(results != null) {
+                results.close();
+            }
+            if(selectStmt != null) {
+                selectStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+        return null;
     }
 }

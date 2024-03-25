@@ -26,9 +26,9 @@ public class CharacterEquippedGearDao {
             connection = connectionManager.getConnection();
             insertStmt = connection.prepareStatement(insertCharacterEquippedGear, Statement.RETURN_GENERATED_KEYS);
 
-            insertStmt.setString(1,characterEquippedGear.getGearSlot().toString());
-            insertStmt.setInt(2,characterEquippedGear.getCharacter().getCharacterID());
-            //insertStmt.setInt(3,characterEquippedGear.getGear().getGearID());
+            insertStmt.setString(1,characterEquippedGear.getSlotName().toString());
+            insertStmt.setInt(2,characterEquippedGear.getCharacterID());
+            insertStmt.setInt(3,characterEquippedGear.getGearID());
 
             insertStmt.executeUpdate();
 

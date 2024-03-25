@@ -1,46 +1,37 @@
 package pm3.model;
 
 public class CharacterEquippedGear {
-    protected GearSlot gearSlot;
-    protected Character character;
-    protected Gear gear;
+  protected String SlotName;
+  protected Integer CharacterID;
+  protected Integer GearID;
 
-    public CharacterEquippedGear(GearSlot gearSlot, Character character) {
-        this.gearSlot = gearSlot;
-        this.character = character;
-    }
+  public CharacterEquippedGear(String slotName, Integer characterID, Integer gearID) {
+    SlotName = slotName;
+    CharacterID = characterID;
+    GearID = gearID;
+  }
 
-    public CharacterEquippedGear(Gear gear) {
-        this.gear = gear;
-    }
+  public String getSlotName() {
+    return SlotName;
+  }
 
-    public CharacterEquippedGear(GearSlot gearSlot, Character character, Gear gear) {
-        this.gearSlot = gearSlot;
-        this.character = character;
-        this.gear = gear;
-    }
+  public void setSlotName(String slotName) {
+    SlotName = slotName;
+  }
 
-    public GearSlot getGearSlot() {
-        return gearSlot;
-    }
+  public Integer getCharacterID() {
+    return CharacterID;
+  }
 
-    public void setGearSlot(GearSlot gearSlot) {
-        this.gearSlot = gearSlot;
-    }
+  public void setCharacterID(Integer characterID) {
+    CharacterID = characterID;
+  }
 
-    public Character getCharacter() {
-        return character;
-    }
+  public Integer getGearID() {
+    return GearID;
+  }
 
-    public void setCharacter(Character character) {
-        this.character = character;
-    }
-
-    public Gear getGear() {
-        return gear;
-    }
-
-    public void setGear(Gear gear) {
-        this.gear = gear;
-    }
+  public void setGearID(Integer gearID) {
+    GearID = gearID;
+  }
 }
