@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 public class WeaponDao extends ItemDao{
   private static WeaponDao instance = null;
@@ -43,13 +44,41 @@ public class WeaponDao extends ItemDao{
       insertStmt.setInt(4, weapon.getDamageDone());
       insertStmt.setDouble(5, weapon.getAutoAttack());
       insertStmt.setDouble(6, weapon.getAttackDelay());
-      insertStmt.setInt(7, weapon.getStrengthBonus());
-      insertStmt.setInt(8, weapon.getVitalityBonus());
-      insertStmt.setInt(9, weapon.getDeterminationBonus());
-      insertStmt.setInt(10, weapon.getDirectHitRateBonus());
-      insertStmt.setInt(11, weapon.getSkillSpeedBonus());
-      insertStmt.setInt(12, weapon.getTenacityBonus());
-      insertStmt.setInt(13, weapon.getCriticalHitBonus());
+      if(weapon.getStrengthBonus() == null) {
+        insertStmt.setNull(7, Types.INTEGER);
+      }else{
+        insertStmt.setInt(7, weapon.getStrengthBonus());
+      }
+      if(weapon.getVitalityBonus() == null) {
+        insertStmt.setNull(8, Types.INTEGER);
+      }else{
+        insertStmt.setInt(8, weapon.getVitalityBonus());
+      }
+      if(weapon.getDeterminationBonus() == null) {
+        insertStmt.setNull(9, Types.INTEGER);
+      }else{
+        insertStmt.setInt(9, weapon.getDeterminationBonus());
+      }
+      if(weapon.getDirectHitRateBonus() == null) {
+        insertStmt.setNull(10, Types.INTEGER);
+      }else{
+        insertStmt.setInt(10, weapon.getDirectHitRateBonus());
+      }
+      if(weapon.getSkillSpeedBonus() == null) {
+        insertStmt.setNull(11, Types.INTEGER);
+      }else{
+        insertStmt.setInt(11, weapon.getSkillSpeedBonus());
+      }
+      if(weapon.getTenacityBonus() == null) {
+        insertStmt.setNull(12, Types.INTEGER);
+      }else{
+        insertStmt.setInt(12, weapon.getTenacityBonus());
+      }
+      if(weapon.getCriticalHitBonus() == null) {
+        insertStmt.setNull(13, Types.INTEGER);
+      }else{
+        insertStmt.setInt(13, weapon.getCriticalHitBonus());
+      }
       insertStmt.executeUpdate();
 
       return weapon;

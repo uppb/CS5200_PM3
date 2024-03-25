@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 public class GearDao extends ItemDao{
   private static GearDao instance = null;
@@ -42,15 +43,51 @@ public class GearDao extends ItemDao{
       insertStmt.setInt(4, gear.getRequiredLevel());
       insertStmt.setInt(5, gear.getDefenseRating());
       insertStmt.setInt(6, gear.getMagicDefenceRating());
-      insertStmt.setInt(7, gear.getStrengthBonus());
-      insertStmt.setInt(8, gear.getVitalityBonus());
-      insertStmt.setInt(9, gear.getCriticalHitBonus());
-      insertStmt.setInt(10, gear.getDeterminationBonus());
-      insertStmt.setInt(11, gear.getDexterityBonus());
-      insertStmt.setInt(12, gear.getMindBonus());
-      insertStmt.setInt(13, gear.getTenacityBonus());
-      insertStmt.setInt(14, gear.getSkillSpeedBonus());
-      insertStmt.setInt(15, gear.getCriticalHitRateBonus());
+      if(gear.getStrengthBonus() == null){
+        insertStmt.setNull(7, Types.INTEGER);
+      }else {
+        insertStmt.setInt(7, gear.getStrengthBonus());
+      }
+      if(gear.getVitalityBonus() == null) {
+        insertStmt.setNull(8, Types.INTEGER);
+      }else{
+        insertStmt.setInt(8, gear.getVitalityBonus());
+      }
+      if(gear.getCriticalHitBonus() == null) {
+        insertStmt.setNull(9, Types.INTEGER);
+      }else {
+        insertStmt.setInt(9, gear.getCriticalHitBonus());
+      }
+      if(gear.getDeterminationBonus() == null) {
+        insertStmt.setNull(10, Types.INTEGER);
+      }else {
+        insertStmt.setInt(10, gear.getDeterminationBonus());
+      }
+      if(gear.getDexterityBonus() == null) {
+        insertStmt.setNull(11, Types.INTEGER);
+      }else {
+        insertStmt.setInt(11, gear.getDexterityBonus());
+      }
+      if(gear.getMindBonus() == null) {
+        insertStmt.setNull(12, Types.INTEGER);
+      }else {
+        insertStmt.setInt(12, gear.getMindBonus());
+      }
+      if(gear.getTenacityBonus() == null) {
+        insertStmt.setNull(13, Types.INTEGER);
+      }else {
+        insertStmt.setInt(13, gear.getTenacityBonus());
+      }
+      if(gear.getSkillSpeedBonus() == null) {
+        insertStmt.setNull(14, Types.INTEGER);
+      }else {
+        insertStmt.setInt(14, gear.getSkillSpeedBonus());
+      }
+      if(gear.getCriticalHitRateBonus() == null) {
+        insertStmt.setNull(15, Types.INTEGER);
+      }else {
+        insertStmt.setInt(15, gear.getCriticalHitRateBonus());
+      }
       insertStmt.executeUpdate();
 
       return gear;

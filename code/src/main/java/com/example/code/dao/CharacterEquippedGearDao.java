@@ -24,7 +24,7 @@ public class CharacterEquippedGearDao {
   }
 
   public CharacterEquippedGear create(CharacterEquippedGear characterEquippedGear) throws SQLException {
-    String insertCharacterEquippedGear = "INSERT INTO CharacterEquippedGear(SlotName,CharacterID,GearID) VALUES(?,?,?);";
+    String insertCharacterEquippedGear = "INSERT INTO ChacterEquippedGear(SlotName,CharacterID,GearID) VALUES(?,?,?);";
     Connection connection = null;
     PreparedStatement insertStmt = null;
     try {
@@ -51,7 +51,7 @@ public class CharacterEquippedGearDao {
 
 
   public CharacterEquippedGear getCharacterEquippedGearBySlotNameAndID(String SlotName, int CharacterID) throws SQLException {
-    String selectCharacter = "SELECT SlotName,CharacterID,GearID FROM CharacterEquippedGear "
+    String selectCharacter = "SELECT SlotName,CharacterID,GearID FROM ChacterEquippedGear "
         + "WHERE SlotName=? AND CharacterID=?;";
     Connection connection = null;
     PreparedStatement selectStmt = null;

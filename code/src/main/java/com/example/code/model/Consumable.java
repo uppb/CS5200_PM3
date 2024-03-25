@@ -2,7 +2,7 @@ package com.example.code.model;
 
 public class Consumable extends Item{
   protected String Description;
-  protected Double TenactiyBonus;
+  protected Double TenacityBonus;
   protected Double VitalityBonus;
   protected Double DeterminationBonus;
   protected Integer TenacityCap;
@@ -29,12 +29,12 @@ public class Consumable extends Item{
     Description = description;
   }
 
-  public Double getTenactiyBonus() {
-    return TenactiyBonus;
+  public Double getTenacityBonus() {
+    return TenacityBonus;
   }
 
-  public void setTenactiyBonus(Double tenactiyBonus) {
-    TenactiyBonus = tenactiyBonus;
+  public void setTenacityBonus(Double tenacityBonus) {
+    TenacityBonus = tenacityBonus;
   }
 
   public Double getVitalityBonus() {

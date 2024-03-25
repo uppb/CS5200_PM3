@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 public class ItemDao {
   protected ConnectionManager connectionManager;
@@ -32,7 +33,9 @@ public class ItemDao {
       insertStmt = connection.prepareStatement(insertItem, Statement.RETURN_GENERATED_KEYS);
       insertStmt.setString(1, item.getName());
       insertStmt.setInt(2, item.getMaxStackSize());
-      insertStmt.setDouble(3, item.getVendorPrice());
+      if(item.getVendorPrice() == null){
+        insertStmt.setNull(3, Types.DECIMAL);
+      }else insertStmt.setDouble(3, item.getVendorPrice());
       insertStmt.setBoolean(4, item.getForSale());
       insertStmt.setInt(5, item.getItemLevel());
       insertStmt.executeUpdate();
@@ -99,7 +102,7 @@ public class ItemDao {
   }
 
   public Item delete(Item item) throws SQLException {
-    String delteItem = "DELETE FROM Persons WHERE ItemID=?;";
+    String delteItem = "DELETE FROM Item WHERE ItemID=?;";
     Connection connection = null;
     PreparedStatement deleteStmt = null;
     try {
