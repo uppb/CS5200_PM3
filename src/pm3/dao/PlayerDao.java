@@ -118,6 +118,32 @@ public class PlayerDao {
         }
     }
 
+    public boolean delete(int playerID) throws SQLException {
+        String deletePlayer = "DELETE FROM Player WHERE PlayerID = ?;";
+        Connection connection = null;
+        PreparedStatement deleteStmt = null;
+        try {
+            connection = connectionManager.getConnection();
+            deleteStmt = connection.prepareStatement(deletePlayer);
+            deleteStmt.setInt(1, playerID);
+
+            int affectedRows = deleteStmt.executeUpdate();
+
+            // Return true if the deletion was successful (i.e., one row was affected).
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(deleteStmt != null) {
+                deleteStmt.close();
+            }
+            if(connection != null) {
+                connection.close();
+            }
+        }
+    }
+
 
 }	
 	

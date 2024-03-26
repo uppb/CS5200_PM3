@@ -9,122 +9,77 @@ import java.sql.*;
 public class CharacterInventoryDao {
     protected ConnectionManager connectionManager;
     private static CharacterInventoryDao instance = null;
-    protected CharacterInventoryDao(){
+    protected CharacterInventoryDao() {
         connectionManager = new ConnectionManager();
     }
     public static CharacterInventoryDao getInstance() {
-        if(instance==null) {
+        if(instance == null) {
             instance = new CharacterInventoryDao();
         }
         return instance;
     }
 
-    public CharacterInventory create(CharacterInventory characterInventory) throws SQLException{
-        String insertCharacterInventory = "INSERT INTO CharacterInventory(CharacterID,ItemID,StackSize) VALUES(?,?,?)";
-        Connection connection = null;
-        PreparedStatement insertStmt = null;
-        ResultSet resultKey = null;
+    // Initially create the inventory with CharacterID only
+    public CharacterInventory create(CharacterInventory characterInventory) throws SQLException {
+        String insertCharacterInventory = "INSERT INTO CharacterInventory(CharacterID) VALUES(?)";
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement insertStmt = connection.prepareStatement(insertCharacterInventory, Statement.RETURN_GENERATED_KEYS)) {
 
-        try{
-            connection = connectionManager.getConnection();
-            insertStmt = connection.prepareStatement(insertCharacterInventory, Statement.RETURN_GENERATED_KEYS);
-
-            insertStmt.setInt(1,characterInventory.getCharacter().getCharacterID());
-            //insertStmt.setInt(2,characterInventory.getItem().getItemID());
-            insertStmt.setInt(3,characterInventory.getStackSize());
-
+            insertStmt.setInt(1, characterInventory.getCharacter().getCharacterID());
             insertStmt.executeUpdate();
 
-            resultKey = insertStmt.getGeneratedKeys();
-
-            int inventorySlotID = -1;
-            if(resultKey.next()) {
-                inventorySlotID = resultKey.getInt(1);
-            } else {
-                throw new SQLException("Unable to retrieve auto-generated key.");
+            try (ResultSet resultKey = insertStmt.getGeneratedKeys()) {
+                if(resultKey.next()) {
+                    int inventorySlotID = resultKey.getInt(1);
+                    characterInventory.setInventorySlotID(inventorySlotID);
+                } else {
+                    throw new SQLException("Unable to retrieve auto-generated key.");
+                }
             }
-            characterInventory.setInventorySlotID(inventorySlotID);
-
             return characterInventory;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            if(connection != null) {
-                connection.close();
-            }
-            if(insertStmt != null) {
-                insertStmt.close();
-            }
         }
     }
+
+    // Update an inventory slot to add an Item and StackSize
+    public boolean updateInventoryItemAndSize(int inventorySlotID, int itemID, int stackSize) throws SQLException {
+        String updateInventory = "UPDATE CharacterInventory SET ItemID = ?, StackSize = ? WHERE InventorySlotID = ?";
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement updateStmt = connection.prepareStatement(updateInventory)) {
+
+            updateStmt.setInt(1, itemID);
+            updateStmt.setInt(2, stackSize);
+            updateStmt.setInt(3, inventorySlotID);
+
+            int affectedRows = updateStmt.executeUpdate();
+            return affectedRows > 0;
+        }
+    }
+
+    // Fetch an inventory slot by its ID
     public CharacterInventory getByInventorySlotID(int inventorySlotID) throws SQLException {
-        String selectCharacterInventory = "SELECT InventorySlotID, CharacterID, ItemID, StackSize FROM CharacterInventory WHERE InventorySlotID = ?;";
-        Connection connection = null;
-        PreparedStatement selectStmt = null;
-        ResultSet results = null;
-        try {
-            connection = connectionManager.getConnection();
-            selectStmt = connection.prepareStatement(selectCharacterInventory);
+        String selectCharacterInventory = "SELECT InventorySlotID, CharacterID, ItemID, StackSize FROM CharacterInventory WHERE InventorySlotID = ?";
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement selectStmt = connection.prepareStatement(selectCharacterInventory)) {
+
             selectStmt.setInt(1, inventorySlotID);
+            try (ResultSet results = selectStmt.executeQuery()) {
+                if(results.next()) {
+                    int characterID = results.getInt("CharacterID");
+                    Integer itemID = (Integer) results.getObject("ItemID"); // ItemID can be null
+                    Integer stackSize = results.getInt("StackSize");
 
-            results = selectStmt.executeQuery();
-            if(results.next()) {
-                int foundInventorySlotID = results.getInt("InventorySlotID");
-                int characterID = results.getInt("CharacterID");
-                int itemID = results.getInt("ItemID");
-                int stackSize = results.getInt("StackSize");
+                    Character character = CharacterDao.getInstance().getCharacterById(characterID);
+                    Item item = itemID != null ? ItemDao.getInstance().getItemByID(itemID) : null;
 
-                Character character = CharacterDao.getInstance().getCharacterById(characterID); // Assuming this method exists
-                Item item = ItemDao.getInstance().getItemByID(itemID); // Assuming this method exists
+                    CharacterInventory characterInventory = new CharacterInventory(character);
+                    characterInventory.setInventorySlotID(inventorySlotID);
+                    characterInventory.setItem(item);
+                    characterInventory.setStackSize(stackSize);
 
-                CharacterInventory characterInventory = new CharacterInventory(foundInventorySlotID);
-                characterInventory.setCharacter(character);
-                characterInventory.setItem(item);
-                characterInventory.setStackSize(stackSize);
-
-                return characterInventory;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            if(results != null) {
-                results.close();
-            }
-            if(selectStmt != null) {
-                selectStmt.close();
-            }
-            if(connection != null) {
-                connection.close();
+                    return characterInventory;
+                }
             }
         }
         return null;
-    }
-
-    public CharacterInventory updateStackSize(int inventorySlotID, int newStackSize) throws SQLException {
-        String updateCharacterInventory = "UPDATE CharacterInventory SET StackSize = ? WHERE InventorySlotID = ?;";
-        Connection connection = null;
-        PreparedStatement updateStmt = null;
-        try {
-            connection = connectionManager.getConnection();
-            updateStmt = connection.prepareStatement(updateCharacterInventory);
-            updateStmt.setInt(1, newStackSize);
-            updateStmt.setInt(2, inventorySlotID);
-
-            updateStmt.executeUpdate();
-
-            return getByInventorySlotID(inventorySlotID);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        } finally {
-            if(updateStmt != null) {
-                updateStmt.close();
-            }
-            if(connection != null) {
-                connection.close();
-            }
-        }
     }
 }

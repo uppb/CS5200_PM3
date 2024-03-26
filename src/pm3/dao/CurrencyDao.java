@@ -93,31 +93,32 @@ public class CurrencyDao {
         }
         return null;
     }
-    public Currency updateCurrency(Currency currency) throws SQLException {
+    public boolean updateCurrency(int currencyID, String newName, int newTotalCap, int newWeeklyCap) throws SQLException {
         String updateCurrency = "UPDATE Currency SET Name = ?, TotalCap = ?, WeeklyCap = ? WHERE CurrencyID = ?;";
         Connection connection = null;
         PreparedStatement updateStmt = null;
         try {
             connection = connectionManager.getConnection();
             updateStmt = connection.prepareStatement(updateCurrency);
-            updateStmt.setString(1, currency.getName());
-            updateStmt.setInt(2, currency.getTotalCap());
-            updateStmt.setInt(3, currency.getWeeklyCap());
-            updateStmt.setInt(4, currency.getCurrencyID());
+            updateStmt.setString(1, newName);
+            updateStmt.setInt(2, newTotalCap);
+            updateStmt.setInt(3, newWeeklyCap);
+            updateStmt.setInt(4, currencyID);
 
-            updateStmt.executeUpdate();
+            int affectedRows = updateStmt.executeUpdate();
 
-            return currency;
+            return affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         } finally {
-            if(updateStmt != null) {
+            if (updateStmt != null) {
                 updateStmt.close();
             }
-            if(connection != null) {
+            if (connection != null) {
                 connection.close();
             }
         }
     }
+
 }

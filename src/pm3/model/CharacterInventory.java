@@ -6,8 +6,8 @@ public class CharacterInventory {
     protected Item item;
     protected int stackSize;
 
-    public CharacterInventory(int inventorySlotID) {
-        this.inventorySlotID = inventorySlotID;
+    public CharacterInventory(Character character) {
+        this.character = character;
     }
 
     public int getInventorySlotID() {
